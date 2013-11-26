@@ -4,6 +4,7 @@ title: "Ruby, Combinatorics and Burritos"
 description: "Just how many possible burrito combinations are there?"
 category: posts
 tags: [math, programming, clojure]
+comments: true
 ---
 
 <figure>
