@@ -53,7 +53,7 @@ As of 1.9.2, Ruby's Array class includes a method called `permutation()`. Maybe 
 {% highlight ruby %}
 
     def possible_combinations(ingredients)
-        return (1..ingredients).to_a.permutation.count
+        (1..ingredients).to_a.permutation.count
     end
 
     possible_combinations(2)
@@ -65,7 +65,7 @@ This is wrong because `Array.permutation()` is returning combinations that must 
 {% highlight ruby %}
 
     def list_combinations(ingredients)
-        return (1..ingredients).to_a.permutation.map {|n| n}
+        (1..ingredients).to_a.permutation.map {|n| n}
     end
 
     list_combinations(3)
@@ -82,7 +82,7 @@ the answer using the factorial value of N number of ingredients.
 
     class Integer
        def factorial
-       (1..self).reduce(:*)
+            (1..self).reduce(:*)
        end
     end
 
@@ -121,12 +121,10 @@ Let's have a look at `Array.combinations()` to see if we can build subsets of th
 
 {% highlight ruby %}
 
-    def list_combinations(ingredients)
-       ingredients_array = (1..ingredients).to_a
-       combinations = 1.upto(ingredients_array.size).flat_map do |n|
-            ingredients_array.combination(n).to_a
+    def list_combinations(num_of_ingredients)
+        1.upto((1..num_of_ingredients).to_a.size).flat_map do |n|
+            (1..num_of_ingredients).to_a.combination(n).to_a
        end
-       return combinations
     end
 
     list_combinations(3)
@@ -139,16 +137,14 @@ We have a winner! All we need to do is count the number of inner arrays.
 
 {% highlight ruby %}
 
-    def list_combinations(ingredients)
-       ingredients_array = (1..ingredients).to_a
-       combinations = 1.upto(ingredients_array.size).flat_map do |n|
-            ingredients_array.combination(n).to_a
+    def list_combinations(num_of_ingredients)
+        1.upto((1..num_of_ingredients).to_a.size).flat_map do |n|
+            (1..num_of_ingredients).to_a.combination(n).to_a
        end
-       return combinations
     end
 
-    def possible_combinations(ingredients)
-        list_combinations(ingredients).count
+    def possible_combinations(num_of_ingredients)
+        list_combinations(num_of_ingredients).count
     end
 
     burrito_ingredients = 25
@@ -158,12 +154,12 @@ We have a winner! All we need to do is count the number of inner arrays.
 
 {% endhighlight %}
 
+#### Recap
 It would appear that for the first time in history, someone in marketing has exaggerated‎ the truth. There are actually
-134,217,724 ways to configure a burrito at Freebirds :) .
+134,217,724 ways to configure a burrito at Freebirds, not one billion :) .
 
-#### Summmary
 
-Solving combinatorical problems can quickly go in the wrong direction if you don't gain a good footing on the problem
+In summary, solving combinatorical problems can quickly go in the wrong direction if you don't gain a good footing on the problem
 you're trying to solve. As a general heuristic , when ordering or position of elements in your collection matter,
 look at using permutations to solve your problem. When you need to find unique subsets within a set, use combinations
 or powersets.
@@ -171,7 +167,38 @@ or powersets.
 Also, check out the gem [combinatorics](https://github.com/postmodern/combinatorics) for solving more complex problems
 relating to combinatorics.
 
+---
 
+#### Update
+
+ A [friend of mine](https://github.com/ryanvz) brought to my attention an even faster way of solving this using inject
+  rather than flat_map. Not bad!
+
+
+ {% highlight ruby %}
+
+ require 'benchmark'
+
+    def ingredients
+        1.upto(25).to_a
+    end
+
+    def combinations_using_inject
+        ingredients.inject(0) do |sum, i|
+            sum += ingredients.combination(i).count
+        end
+    end
+
+  # Benchmark using inject
+  puts Benchmark.measure {combinations_using_inject()}
+  =>  6.980000   0.790000   7.770000 (  7.771221)
+
+  # Benchmark using flat_map way
+  puts Benchmark.measure { possible_combinations(25)}
+  =>  10.510000   4.920000  15.430000 ( 16.290122)
+
+
+ {% endhighlight %}
 
 
 
